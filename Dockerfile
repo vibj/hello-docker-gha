@@ -12,13 +12,15 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-RUN go build -o /helloworld
+#RUN go build -o /main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /main .
 
 # Use a minimal image for the final container
 FROM alpine:latest
 
 # Copy the compiled binary from the builder stage
-COPY --from=builder /helloworld /helloworld
+COPY --from=builder /main /main
+RUN chmod +x /main
 
 # Set the entrypoint to the binary
-ENTRYPOINT ["/helloworld"]
+ENTRYPOINT ["/main"]
