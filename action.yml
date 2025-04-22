@@ -1,0 +1,8 @@
+name: "Hello World Action"
+description: "A containerized GitHub Action written in Go that prints Hello, World!"
+author: "Your Name"
+inputs: {}
+outputs: {}
+runs:
+  using: "docker"
+  image: "Dockerfile"
