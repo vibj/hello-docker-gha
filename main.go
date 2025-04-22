@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 // Define a struct to match the JSON response structure
@@ -38,6 +39,20 @@ func main() {
 		fmt.Printf("Failed to parse JSON: %v", err)
 	}
 
-	// Print the title to the logs
-	fmt.Printf("Title: %s", post.Title)
+	// Write the title to the GITHUB_ENV file
+	githubEnv := os.Getenv("GITHUB_ENV")
+	if githubEnv != "" {
+		file, err := os.OpenFile(githubEnv, os.O_APPEND|os.O_WRONLY, 0644)
+		if err != nil {
+			fmt.Printf("Failed to open GITHUB_ENV file: %v", err)
+		}
+		defer file.Close()
+
+		_, err = file.WriteString(fmt.Sprintf("TITLE=%s\n", post.Title))
+		if err != nil {
+			fmt.Printf("Failed to write to GITHUB_ENV file: %v", err)
+		}
+	} else {
+		fmt.Printf("GITHUB_ENV is not set. Running outside of GitHub Actions?")
+	}
 }
